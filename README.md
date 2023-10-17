@@ -13,6 +13,6 @@ Este projeto foi criado como parte do curso de Web Crawling. Através de tecnica
 Para usar o Web Crawler, siga as etapas abaixo:
 
 1. Clone o repositório
-   '''git clone https://github.com/brendabo1/Web_Crawler '''
+   `git clone https://github.com/brendabo1/Web_Crawler ´
 2. Execute
    '''python crawler.py '''
