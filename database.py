@@ -1,6 +1,7 @@
 from pymongo.mongo_client import MongoClient
 from dotenv import load_dotenv
 import os
+from datetime import datetime
 
 class Database:
     
@@ -17,19 +18,20 @@ class Database:
     def insert(self, data: dict):
         query = {'title': data['title']}
         result = self.movies.find_one(query, sort=[('date', -1)])
-
-        if result is not None:
+        if result is None:
             self.movies.insert_one(data)
             return data
         elif result['score'] > data['score'] or result['score'] < data['score']:
             movie = data.copy()
             movie['old_score'] = result['score']
             self.movies.insert_one(data)
+    
             return movie      
         else:
             return None
 
 if __name__=="__main__":
+    
     db = Database()
-    data = {'title': 'Besouro Azul', 'image': 'data:image/gif;base64,R0lGODlhAwAEAIAAAAAAAAAAACH5BAEAAAAALAAAAAADAAQAAAIDhI9WADs=', 'score': '5,4', 'link': 'https://www.adorocinema.com/filmes/filme-270074/'}
-    db.insert(data)
+    #result = db.movies.delete_many({})
+    

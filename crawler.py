@@ -31,19 +31,23 @@ class Crawler:
         movies = raw_data.find('ul', class_='ipc-metadata-list')
 
         for movie in movies:
-            title = movie.find('h3', class_='ipc-title__text').text
-            image = movie.find('img', class_='ipc-image')
-            score_users = movie.find('span', class_='ipc-rating-star').text
-            link = movie.find('a', class_="ipc-title-link-wrapper")
-            data = {
-                'title': title,
-                'image': image.attrs['src'],
-                'score': score_users[0:3], 
-                'link': 'https://www.imdb.com' + link.attrs['href'],
-                'date': datetime.now()
-            }
-            print("IMDb", data)
-            response = self.db.insert(data)
+            score = movie.find("span", {"class": "ipc-rating-star ipc-rating-star--base ipc-rating-star--imdb ratingGroup--imdb-rating"})
+           
+            if score is not None and score != "":
+                score = str(score.attrs["aria-label"].replace("IMDb rating:", "")).replace(",", ".")
+                score = float(score)
+                title = movie.find('h3', class_='ipc-title__text').text
+                image = movie.find('img', class_='ipc-image')  
+                link = movie.find('a', class_="ipc-title-link-wrapper")
+                data = {
+                    'title': title,
+                    'image': image.attrs['src'],
+                    'score': score, 
+                    'link': 'https://www.imdb.com' + link.attrs['href'],
+                    'date': datetime.now()
+                }
+                print("IMDb", data)
+                response = self.db.insert(data)
 
 
     def extract_from_adoro_cinema(self, page):
@@ -53,12 +57,12 @@ class Crawler:
             title = movie.find('h2', class_='meta-title').text.strip("\n")
 
             image = movie.find('img', class_='thumbnail-img')
-            score_users = movie.find('span', class_='stareval-note').text
+            score_users = movie.find('span', class_='stareval-note').text.replace(",", ".")
             link = movie.find('a', class_="meta-title-link")
             data = {
                 'title': title,
                 'image': image.attrs['src'],
-                'score': score_users, 
+                'score': float(score_users) *2, 
                 'link': 'https://www.adorocinema.com' + link.attrs['href'],
                 'date': datetime.now()
             }
@@ -75,17 +79,12 @@ class Crawler:
 # Permite a execução do código apenas quando este arquivo é executado diretamente, e não quando importado
 if __name__=="__main__":
     crawler = Crawler()
-
-    print("\n Execute job. Time: {}".format(str(datetime.now())))
-    crawler.extract_from_IMDb()
-    crawler.execute_adoro_cinema(3)
+    def execute(num_pages = 3):
+        print("\n Execute job. Time: {}".format(str(datetime.now())))
+        crawler.extract_from_IMDb()
+        crawler.execute_adoro_cinema(num_pages)
     
-    # def execute(num_pages = 3):
-    #     print("\n Execute job. Time: {}".format(str(datetime.now())))
-    #     crawler.extract_from_IMDb()
-    #     crawler.execute_adoro_cinema(num_pages)
-    
-    # schedule.every(5).minutes.do(execute())
+    schedule.every(5).minutes.do(execute())
 
-    # while True:
-    #     schedule.run_pending()
+    while True:
+        schedule.run_pending()
