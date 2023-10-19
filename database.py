@@ -31,7 +31,7 @@ class Database:
             return None
 
 if __name__=="__main__":
-    
+    # print
     db = Database()
     #result = db.movies.delete_many({})
     var1 = {'title': 'O Lobo de Wall Street', 'image': 'https://m.media-amazon.com/images/M/MV5BZTk1Y2ViODktYjc5Mi00MTQwLWI1ZjItODQwYmI1NDQzMDU0XkEyXkFqcGdeQXVyODc0OTEyNDU@._V1_QL75_UY207_CR1,0,140,207_.jpg', 'score': 8.2, 'link': 'https://www.imdb.com/title/tt0993846/?ref_=chtmvm_t_86', 'date': datetime.now()}
