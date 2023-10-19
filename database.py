@@ -25,6 +25,7 @@ class Database:
             movie = data.copy()
             movie['old_score'] = result['score']
             self.movies.insert_one(data)
+            print("Filme salvo com sucesso", data)
             return movie      
         else:
             return None
