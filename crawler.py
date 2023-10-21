@@ -6,6 +6,7 @@ import time
 from database import Database
 from dotenv import load_dotenv
 import os
+from bot import Bot
 
 # Site 1: https://www.imdb.com/chart/moviemeter/?ref_=nv_mv_mpm&sort=rank%2Casc
 # Site 2: https://www.adorocinema.com/filmes-todos/
@@ -15,6 +16,7 @@ class Crawler:
     def __init__(self):
         load_dotenv()
         self.db = Database()
+        self.bot = Bot()
 
     """"Requisição na url """
     def request_data(self, url: str):
@@ -46,8 +48,10 @@ class Crawler:
                     'link': 'https://www.imdb.com' + link.attrs['href'],
                     'date': datetime.now()
                 }
-                print("IMDb", data)
                 response = self.db.insert(data)
+                if response is not None:
+                    self.bot.post(response)
+            
 
 
     def extract_from_adoro_cinema(self, page):
@@ -67,7 +71,9 @@ class Crawler:
                 'date': datetime.now()
             }
             response = self.db.insert(data)
-            print("AdoroCinema", data)
+            if response is not None:
+                self.bot.post(response)
+            
 
     def execute_adoro_cinema(self, num_pages: int = 3):
         for page in range(1, num_pages):
